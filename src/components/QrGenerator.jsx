@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Box, Button, Container, TextField, Typography} from "@mui/material";
 import QRCode from "react-qr-code";
 
@@ -7,12 +7,13 @@ export const QrGenerator = () => {
     const [inputValue, setInputValue] = useState('')
     const [error, setError] = useState(null)
 
-    const generateQrCode = (value) => {
-        value.indexOf('http://') >= 0 || value.indexOf('https://') >= 0
+    useEffect(() => {
+        inputValue.indexOf('http://') >= 0 || inputValue.indexOf('https://') >= 0
             ? setError(false)
             : setError(true);
-        return value;
-    }
+
+        inputValue === '' && setError(true)
+    }, [inputValue])
 
     return (
         <Container>
@@ -36,14 +37,12 @@ export const QrGenerator = () => {
                     value={inputValue}
                     onChange={e => setInputValue(e.target.value)}
                 />
-                <Button
-                    onClick={() => generateQrCode(inputValue)}
-                    variant="outlined"
-                >
-                    Generate Qr-Code
-                </Button>
                 <Box sx={{display:'flex', justifyContent: 'center'}}>
-                    {error === false && <QRCode value={inputValue}/>}
+                    {
+                        error === false
+                            ? <QRCode value={inputValue}/>
+                            : <></>
+                    }
                 </Box>
             </Box>
         </Container>
