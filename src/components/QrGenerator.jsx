@@ -1,19 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, Box, Button, Container, TextField, Typography} from "@mui/material";
+import React  from 'react';
 import QRCode from "react-qr-code";
+import {Alert, Box, Container, TextField, Typography} from "@mui/material";
+import useCheckedError from "../hooks/useCheckedError";
 
 export const QrGenerator = () => {
-
-    const [inputValue, setInputValue] = useState('')
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        inputValue.indexOf('http://') >= 0 || inputValue.indexOf('https://') >= 0
-            ? setError(false)
-            : setError(true);
-
-        inputValue === '' && setError(true)
-    }, [inputValue])
+    const {error, checkedUrl, inputValue, setInputValue} = useCheckedError()
 
     return (
         <Container>
@@ -29,19 +20,22 @@ export const QrGenerator = () => {
                 <Typography variant="h6" component="h6">
                     QrGenerator
                 </Typography>
-                {error && <Alert severity="error">Please write link</Alert>}
+
+                {checkedUrl.length > 0 && <Alert severity="warning">{checkedUrl}</Alert>}
+
                 <TextField
                     id="outlined-basic"
                     label="Write your link"
                     variant="outlined"
                     value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
+                    onChange={event => setInputValue(event.target.value)}
                 />
+
                 <Box sx={{display:'flex', justifyContent: 'center'}}>
-                    {
-                        error === false
-                            ? <QRCode value={inputValue}/>
-                            : <></>
+                    {error === false && <Box sx={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                                    <Alert severity="success">Greet!</Alert>
+                                    <QRCode value={inputValue}/>
+                                </Box>
                     }
                 </Box>
             </Box>
